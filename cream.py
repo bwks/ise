@@ -7,10 +7,10 @@ requests
 xmltodict
  - https://github.com/martinblech/xmltodict
 """
+import json
 import os
 dir = os.path.dirname(__file__)
 
-import json
 import requests
 import xmltodict
 
