@@ -256,6 +256,7 @@ class ERS(object):
                    dev_group,
                    dev_location,
                    dev_type,
+                   description='',
                    dev_profile='Cisco'):
         """
         Add a device
@@ -266,6 +267,7 @@ class ERS(object):
         :param dev_group: Device group name
         :param dev_location: Device location
         :param dev_type: Device type
+        :param description: Device description
         :param dev_profile: Device profile
         :return: Result dictionary
         """
@@ -278,7 +280,7 @@ class ERS(object):
         self.ise.headers.update({'Content-Type': 'application/vnd.com.cisco.ise.network.networkdevice.1.0+xml'})
 
         data = open(os.path.join(base_dir, 'xml/device_add.xml'), 'r').read().format(
-            name, ip_address, radius_key, snmp_ro, dev_group, dev_location, dev_type, dev_profile
+            name, ip_address, radius_key, snmp_ro, dev_group, dev_location, dev_type, description, dev_profile
         )
 
         resp = self.ise.post('{0}/config/networkdevice'.format(self.url_base), data=data, timeout=self.timeout)
