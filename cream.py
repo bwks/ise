@@ -9,10 +9,11 @@ xmltodict
 """
 import json
 import os
-dir = os.path.dirname(__file__)
 
 import requests
 import xmltodict
+
+base_dir = os.path.dirname(__file__)
 
 
 class ERS(object):
@@ -139,7 +140,7 @@ class ERS(object):
 
         headers = {'Content-Type': 'application/vnd.com.cisco.ise.identity.internaluser.1.1+xml; charset=utf-8'}
 
-        data = open(os.path.join(dir, 'xml/user_add.xml'), 'r').read().format(
+        data = open(os.path.join(base_dir, 'xml/user_add.xml'), 'r').read().format(
                 user_id, password, enable, first_name, last_name, email, description, user_group_oid)
 
         url = '{0}/config/internaluser'.format(self.url_base)
