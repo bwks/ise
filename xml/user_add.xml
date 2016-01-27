@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns3:internaluser description="{6}" name="{0}" id="id" xmlns:ns2="ers.ise.cisco.com" xmlns:ns3="identity.ers.ise.cisco.com">
+<changePassword>true</changePassword>
+<customAttributes>
+</customAttributes>
+<email>{5}</email>
+<enablePassword>{2}</enablePassword>
+<enabled>true</enabled>
+<firstName>{3}</firstName>
+<identityGroups>{7}</identityGroups>
+<lastName>{4}</lastName>
+<password>{1}</password>
+</ns3:internaluser>
