@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns3:networkdevice xmlns:ns2="ers.ise.cisco.com" xmlns:ns3="network.ers.ise.cisco.com" name="{0}">
+    <authenticationSettings>
+        <enableKeyWrap>false</enableKeyWrap>
+        <keyInputFormat>ASCII</keyInputFormat>
+        <networkProtocol>RADIUS</networkProtocol>
+        <radiusSharedSecret>{2}</radiusSharedSecret>
+    </authenticationSettings>
+    <NetworkDeviceIPList>
+        <NetworkDeviceIP>
+            <ipaddress>{1}</ipaddress>
+            <mask>32</mask>
+        </NetworkDeviceIP>
+    </NetworkDeviceIPList>
+    <modelName></modelName>
+    <NetworkDeviceGroupList>
+        <NetworkDeviceGroup>{4}</NetworkDeviceGroup>
+        <NetworkDeviceGroup>{5}</NetworkDeviceGroup>
+        <NetworkDeviceGroup>{6}</NetworkDeviceGroup>
+    </NetworkDeviceGroupList>
+    <profileName>{7}</profileName>
+    <snmpsettings>
+        <linkTrapQuery>true</linkTrapQuery>
+        <macTrapQuery>true</macTrapQuery>
+        <originatingPolicyServicesNode>Auto</originatingPolicyServicesNode>
+        <pollingInterval>28800</pollingInterval>
+        <roCommunity>{3}</roCommunity>
+        <version>TWO_C</version>
+    </snmpsettings>
+    <softwareVersion></softwareVersion>
+</ns3:networkdevice>
