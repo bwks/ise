@@ -18,14 +18,13 @@ import xmltodict
 class ERS(object):
     def __init__(self, ise_node, ers_user, ers_pass, verify=False, disable_warnings=False, timeout=2):
         """
-
-        :param ise_node:
-        :param ers_user:
-        :param ers_pass:
-        :param verify:
-        :param disable_warnings:
-        :param timeout:
-        :return:
+        Class to interact with Cisco ISE via the ERS API
+        :param ise_node: IP Address of the primary admin ISE node
+        :param ers_user: ERS username
+        :param ers_pass: ERS password
+        :param verify: Verify SSL cert
+        :param disable_warnings: Disable requests warnings
+        :param timeout: Query timeout
         """
         self.ise_node = ise_node
         self.user_name = ers_user
@@ -46,13 +45,16 @@ class ERS(object):
     def _to_json(content):
         """
         convert xml to json
-        :param content:
-        :return:
+        :param content: xml to convert to json
+        :return: json result
         """
         return json.loads(json.dumps(xmltodict.parse(content)))
 
     def get_users(self):
-
+        """
+        Get all internal users
+        :return: List of tuples of user details
+        """
         self.ise.headers.update({
             'Accept': 'application/vnd.com.cisco.ise.identity.internaluser.1.1+xml',
             'Connection': 'keep_alive',
@@ -78,9 +80,9 @@ class ERS(object):
 
     def get_user(self, user_oid):
         """
-
-        :param user_oid:
-        :return:
+        Get an internal users details
+        :param user_oid: oid of the user
+        :return: result dictionary
         """
         self.ise.headers.update({
             'Accept': 'application/vnd.com.cisco.ise.identity.internaluser.1.1+xml',
