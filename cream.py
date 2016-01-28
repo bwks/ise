@@ -51,6 +51,60 @@ class ERS(object):
         """
         return json.loads(json.dumps(xmltodict.parse(content)))
 
+    def get_identity_groups(self):
+        """
+        Get all identity groups
+        :return: result dictionary
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+
+        self.ise.headers.update({'Accept': 'application/vnd.com.cisco.ise.identity.identitygroup.1.0+xml'})
+
+        resp = self.ise.get('{0}/config/identitygroup'.format(self.url_base))
+
+        if resp.status_code == 200:
+            result['success'] = True
+            result['response'] = [(i['@name'], i['@id'], i['@description'])
+                                  for i in ERS._to_json(resp.text)['ns3:searchResult']['resources']['resource']]
+            return result
+        else:
+            result['response'] = resp.text
+            result['error'] = resp.status_code
+            return result
+
+    def get_identity_group(self, group_oid):
+        """
+        Get identity group details
+        :param group_oid: oid of the identity group
+        :return: result dictionary
+        """
+        self.ise.headers.update({'Accept': 'application/vnd.com.cisco.ise.identity.identitygroup.1.0+xml'})
+
+        resp = self.ise.get('{0}/config/identitygroup/{1}'.format(self.url_base, group_oid))
+
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+
+        if resp.status_code == 200:
+            result['success'] = True
+            result['response'] = ERS._to_json(resp.text)['ns4:identitygroup']
+            return result
+        elif resp.status_code == 404:
+            result['response'] = 'Unknown User'
+            result['error'] = resp.status_code
+            return result
+        else:
+            result['response'] = resp.text
+            result['error'] = resp.status_code
+            return result
+
     def get_users(self):
         """
         Get all internal users
@@ -66,11 +120,25 @@ class ERS(object):
             'error': '',
         }
 
-        if resp.status_code == 200:
+        json_res = ERS._to_json(resp.text)['ns3:searchResult']
+
+        if resp.status_code == 200 and int(json_res['@total']) > 1:
             result['success'] = True
             result['response'] = [(i['@name'], i['@id'])
-                                  for i in ERS._to_json(resp.text)['ns3:searchResult']['resources']['resource']]
+                                  for i in json_res['resources']['resource']]
             return result
+
+        elif resp.status_code == 200 and int(json_res['@total']) == 1:
+            result['success'] = True
+            result['response'] = [(json_res['resources']['resource']['@name'],
+                                   json_res['resources']['resource']['@id'])]
+            return result
+
+        elif resp.status_code == 200 and int(json_res['@total']) == 0:
+            result['success'] = True
+            result['response'] = [()]
+            return result
+
         else:
             result['response'] = resp.text
             result['error'] = resp.status_code
@@ -82,7 +150,7 @@ class ERS(object):
         :param user_oid: oid of the user
         :return: result dictionary
         """
-        self.ise.headers.update({'Accept': 'application/vnd.com.cisco.ise.identity.internaluser.1.1+xml'})
+        self.ise.headers.update({'Accept': 'application/vnd.com.cisco.ise.identity.internaluser.1.0+xml'})
 
         resp = self.ise.get('{0}/config/internaluser/{1}'.format(self.url_base, user_oid))
 
@@ -108,22 +176,22 @@ class ERS(object):
     def add_user(self,
                  user_id,
                  password,
+                 user_group_oid,
                  enable='',
                  first_name='',
                  last_name='',
                  email='',
-                 description='',
-                 user_group_oid=''):
+                 description=''):
         """
         Add a user to the local user store
         :param user_id: User ID
         :param password: User password
+        :param user_group_oid: OID of group to add user to
         :param enable: Enable password used for Tacacs
         :param first_name: First name
         :param last_name: Last name
         :param email: email address
         :param description: User description
-        :param user_group_oid: OID of group to add user to
         :return: result dictionary
         """
         result = {
@@ -132,7 +200,7 @@ class ERS(object):
             'error': '',
         }
 
-        self.ise.headers.update({'Content-Type': 'application/vnd.com.cisco.ise.identity.internaluser.1.1+xml'})
+        self.ise.headers.update({'Content-Type': 'application/vnd.com.cisco.ise.identity.internaluser.1.0+xml'})
 
         data = open(os.path.join(base_dir, 'xml/user_add.xml'), 'r').read().format(
                 user_id, password, enable, first_name, last_name, email, description, user_group_oid)
@@ -148,7 +216,39 @@ class ERS(object):
             result['error'] = resp.status_code
             return result
 
+    def delete_user(self, user_oid):
+        """
+        Delete a user
+        :param user_oid: User oid
+        :return: result dictionary
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+
+        self.ise.headers.update({'Accept': 'application/vnd.com.cisco.ise.identity.internaluser.1.0+xml'})
+
+        resp = self.ise.delete('{0}/config/internaluser/{1}'.format(self.url_base, user_oid), timeout=self.timeout)
+
+        if resp.status_code == 204:
+            result['success'] = True
+            result['response'] = '{0} Deleted Successfully'.format(user_oid)
+            return result
+        elif resp.status_code == 404:
+            result['response'] = '{0} Unknown user'.format(user_oid)
+            return result
+        else:
+            result['response'] = resp.text
+            result['error'] = resp.status_code
+            return result
+
     def get_device_groups(self):
+        """
+        Get a list tuples of device groups
+        :return:
+        """
         result = {
             'success': False,
             'response': '',
@@ -199,6 +299,10 @@ class ERS(object):
             return result
 
     def get_devices(self):
+        """
+        Get a list of devices
+        :return: result dictionary
+        """
         self.ise.headers.update({'Accept': 'application/vnd.com.cisco.ise.network.networkdevice.1.0+xml'})
 
         resp = self.ise.get('{0}/config/networkdevice'.format(self.url_base))
@@ -209,11 +313,25 @@ class ERS(object):
             'error': '',
         }
 
-        if resp.status_code == 200:
+        json_res = ERS._to_json(resp.text)['ns3:searchResult']
+
+        if resp.status_code == 200 and int(json_res['@total']) > 1:
             result['success'] = True
             result['response'] = [(i['@name'], i['@id'])
-                                  for i in ERS._to_json(resp.text)['ns3:searchResult']['resources']['resource']]
+                                  for i in json_res['resources']['resource']]
             return result
+
+        elif resp.status_code == 200 and int(json_res['@total']) == 1:
+            result['success'] = True
+            result['response'] = [(json_res['resources']['resource']['@name'],
+                                   json_res['resources']['resource']['@id'])]
+            return result
+
+        elif resp.status_code == 200 and int(json_res['@total']) == 0:
+            result['success'] = True
+            result['response'] = [()]
+            return result
+
         else:
             result['response'] = resp.text
             result['error'] = resp.status_code
@@ -288,6 +406,34 @@ class ERS(object):
         if resp.status_code == 201:
             result['success'] = True
             result['response'] = '{0} Added Successfully'.format(name)
+            return result
+        else:
+            result['response'] = resp.text
+            result['error'] = resp.status_code
+            return result
+
+    def delete_device(self, device_oid):
+        """
+        Delete a user
+        :param device_oid: Device oid
+        :return: result dictionary
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+
+        self.ise.headers.update({'Accept': 'application/vnd.com.cisco.ise.network.networkdevice.1.0+xml'})
+
+        resp = self.ise.delete('{0}/config/networkdevice/{1}'.format(self.url_base, device_oid), timeout=self.timeout)
+
+        if resp.status_code == 204:
+            result['success'] = True
+            result['response'] = '{0} Deleted Successfully'.format(device_oid)
+            return result
+        elif resp.status_code == 404:
+            result['response'] = '{0} Unknown device'.format(device_oid)
             return result
         else:
             result['response'] = resp.text
