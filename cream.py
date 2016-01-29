@@ -136,7 +136,7 @@ class ERS(object):
 
         elif resp.status_code == 200 and int(json_res['@total']) == 0:
             result['success'] = True
-            result['response'] = [()]
+            result['response'] = []
             return result
 
         else:
@@ -329,7 +329,7 @@ class ERS(object):
 
         elif resp.status_code == 200 and int(json_res['@total']) == 0:
             result['success'] = True
-            result['response'] = [()]
+            result['response'] = []
             return result
 
         else:
