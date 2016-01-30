@@ -22,7 +22,7 @@ sys.path.append('/path/to/ise/')
 #### Usage
 ```python
 from ise.cream import ERS
-ise = ERS(ise_node='192.168.200.13', ers_user='user', ers_pass='pass', verify=False, disable_warnings=False)
+ise = ERS(ise_node='192.168.200.13', ers_user='user', ers_pass='pass', verify=False, disable_warnings=True)
 ```
 
 #### Methods return a result dictionary
@@ -36,45 +36,50 @@ ise = ERS(ise_node='192.168.200.13', ers_user='user', ers_pass='pass', verify=Fa
 
 #### Get a list of identity groups
 ```python
-ise.get_identity_groups()
+ise.get_identity_groups()['response']
 
-{'response': [('ALL_ACCOUNTS (default)',
-   '10ac3e70-6d90-11e5-978e-005056bf2f0a',
-   'Default ALL_ACCOUNTS (default) User Group'),
-  ('Employee',
-   '10a42820-6d90-11e5-978e-005056bf2f0a',
-   'Default Employee User Group'),
-  ...],
- 'success': True,
- 'error': ''}
+[('ALL_ACCOUNTS (default)',
+  '10ac3e70-6d90-11e5-978e-005056bf2f0a',
+  'Default ALL_ACCOUNTS (default) User Group'),
+ ('Employee',
+  '10a42820-6d90-11e5-978e-005056bf2f0a',
+  'Default Employee User Group'),
+ ...]
 ```
 
 #### Get details about an identity group
 ```python
-ise.get_identity_group('10ac3e70-6d90-11e5-978e-005056bf2f0a')
+ise.get_identity_group('10ac3e70-6d90-11e5-978e-005056bf2f0a')['response']
 
-{'response': {'@xmlns:xs': 'http://www.w3.org/2001/XMLSchema',
-  'link': {'@rel': 'self',
-   '@href': 'https://192.168.200.13:9060/ers/config/identitygroup/10ac3e70-6d90-11e5-978e-005056bf2f0a',
-   '@type': 'application/xml'},
-  '@description': 'Default ALL_ACCOUNTS (default) User Group',
-  'parent': 'NAC Group:NAC:IdentityGroups:User Identity Groups',
-  '@id': '10ac3e70-6d90-11e5-978e-005056bf2f0a',
-  '@name': 'ALL_ACCOUNTS (default)',
-  '@xmlns:ns4': 'identity.ers.ise.cisco.com',
-  '@xmlns:ers': 'ers.ise.cisco.com'},
- 'success': True,
- 'error': ''}
+{'@id': '10ac3e70-6d90-11e5-978e-005056bf2f0a',
+ 'link': {'@href': 'https://192.168.200.13:9060/ers/config/identitygroup/10ac3e70-6d90-11e5-978e-005056bf2f0a',
+  '@rel': 'self',
+  '@type': 'application/xml'},
+ '@xmlns:ers': 'ers.ise.cisco.com',
+ '@name': 'ALL_ACCOUNTS (default)',
+ '@xmlns:xs': 'http://www.w3.org/2001/XMLSchema',
+ '@xmlns:ns4': 'identity.ers.ise.cisco.com',
+ '@description': 'Default ALL_ACCOUNTS (default) User Group',
+ 'parent': 'NAC Group:NAC:IdentityGroups:User Identity Groups'}
 ```
 
 #### Get a list of devices
 ```python
-ise.get_devices()
+ise.get_devices()['response']
 
-{'response': [('TEST_R3', '3d52aca0-c5bc-11e5-a0ed-000c297b78b4'),
-  ('TEST_R4', '2d80d6d0-c5bc-11e5-a0ed-000c297b78b4')],
- 'success': True,
- 'error': ''}
+[('TEST_R3', '3d52aca0-c5bc-11e5-a0ed-000c297b78b4'),
+ ('TEST_R4', '2d80d6d0-c5bc-11e5-a0ed-000c297b78b4')]
+```
+
+#### Get a list of device groups
+```python
+ise.get_device_groups()['response']
+
+[('Device Type#All Device Types', 'dbf56650-6d8c-11e5-978e-005056bf2f0a'),
+ ('Device Type#All Device Types#TEST_DEV_TYPE', '21be2c40-c4ee-11e5-a0ed-000c297b78b4'),
+ ('Location#All Locations', 'db800f40-6d8c-11e5-978e-005056bf2f0a'),
+ ('Location#All Locations#TEST_LOC', 'db804ce0-c4ed-11e5-a0ed-000c297b78b4'),
+ ('TEST_NDG_TYPE#TEST_NDG', 'c33127e0-c4ed-11e5-a0ed-000c297b78b4')]
 ```
 
 #### Add a device
