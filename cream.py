@@ -7,7 +7,7 @@ requests
 xmltodict
  - https://github.com/martinblech/xmltodict
 
-Version: 0.1.3
+Version: 0.1.4
 """
 import json
 import os
