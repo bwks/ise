@@ -239,31 +239,37 @@ class ERS(object):
             result['error'] = resp.status_code
             return result
 
-    def delete_user(self, user_oid):
-        """
-        Delete a user
-        :param user_oid: User oid
-        :return: result dictionary
-        """
+    def delete_user(self, user_id):
+        self.ise.headers.update({'Accept': 'application/vnd.com.cisco.ise.identity.internaluser.1.0+xml'})
+
         result = {
             'success': False,
             'response': '',
             'error': '',
         }
 
-        self.ise.headers.update({'Accept': 'application/vnd.com.cisco.ise.identity.internaluser.1.0+xml'})
+        resp = self.ise.get('{0}/config/internaluser?filter=name.EQ.{1}'.format(self.url_base, user_id))
+        found_user = ERS._to_json(resp.text)
 
-        resp = self.ise.delete('{0}/config/internaluser/{1}'.format(self.url_base, user_oid), timeout=self.timeout)
+        if found_user['ns3:searchResult']['@total'] == '1':
+            user_oid = found_user['ns3:searchResult']['resources']['resource']['@id']
+            resp = self.ise.delete('{0}/config/internaluser/{1}'.format(self.url_base, user_oid), timeout=self.timeout)
 
-        if resp.status_code == 204:
-            result['success'] = True
-            result['response'] = '{0} Deleted Successfully'.format(user_oid)
-            return result
-        elif resp.status_code == 404:
-            result['response'] = '{0} Unknown user'.format(user_oid)
-            return result
+            if resp.status_code == 204:
+                result['success'] = True
+                result['response'] = '{0} Deleted Successfully'.format(user_id)
+                return result
+            elif resp.status_code == 404:
+                result['response'] = '{0} Unknown user'.format(user_id)
+                return result
+            else:
+                result['response'] = ERS._to_json(resp.text)['ns3:ersResponse']['messages']['message']['title']
+                result['error'] = resp.status_code
+                return result
+        elif found_user['ns3:searchResult']['@total'] == '0':
+            return '{0} not found'.format(user_id)
         else:
-            result['response'] = ERS._to_json(resp.text)['ns3:ersResponse']['messages']['message']['title']
+            result['response'] = 'Unknown error'
             result['error'] = resp.status_code
             return result
 
