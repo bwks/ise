@@ -49,6 +49,35 @@ ise.get_identity_groups()['response']
  ...]
 ```
 
+#### Get endpoint identity groups
+```python
+ise.get_endpoint_groups()['response']
+
+[('Android',
+  '265079a0-6d8e-11e5-978e-005056bf2f0a',
+  'Identity Group for Profile: Android'),
+ ('Apple-iDevice',
+  '32c8eb40-6d8e-11e5-978e-005056bf2f0a',
+  'Identity Group for Profile: Apple-iDevice'),
+  ...]
+```
+
+#### Get details about an endpoint
+```python
+ise.get_endpoint_group(group='Android')['response']
+
+{'systemDefined': 'true',
+ 'link': {'@href': 'https://192.168.200.13:9060/ers/config/endpointgroup/265079a0-6d8e-11e5-978e-005056bf2f0a',
+  '@type': 'application/xml',
+  '@rel': 'self'},
+ '@id': '265079a0-6d8e-11e5-978e-005056bf2f0a',
+ '@xmlns:ns4': 'identity.ers.ise.cisco.com',
+ '@xmlns:xs': 'http://www.w3.org/2001/XMLSchema',
+ '@description': 'Identity Group for Profile: Android',
+ '@xmlns:ers': 'ers.ise.cisco.com',
+ '@name': 'Android'}
+```
+
 #### Get details about an identity group
 ```python
 ise.get_identity_group(group='Employee')['response']
