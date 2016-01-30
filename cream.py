@@ -11,11 +11,20 @@ Version: 0.1.3
 """
 import json
 import os
+import re
 
 import requests
 import xmltodict
 
 base_dir = os.path.dirname(__file__)
+
+
+class InvalidMacAddress(Exception):
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)
 
 
 class ERS(object):
@@ -53,6 +62,19 @@ class ERS(object):
         :return: json result
         """
         return json.loads(json.dumps(xmltodict.parse(content)))
+
+    @staticmethod
+    def _mac_test(mac):
+        """
+        Test for valid mac address
+        :param mac: MAC address in the form of AA:BB:CC:00:11:22
+        :return: True/False
+        """
+
+        if re.search(r'([0-9A-F]{2}[:]){5}([0-9A-F]){2}', mac.upper()) is not None:
+            return True
+        else:
+            return False
 
     def get_endpoint_groups(self):
         """
@@ -120,6 +142,92 @@ class ERS(object):
             result['response'] = '{0} not found'.format(group)
             result['error'] = resp.status_code
             return result
+
+    def get_endpoints(self):
+        """
+        Get all endpoints
+        :return: result dictionary
+        """
+        self.ise.headers.update({'Accept': 'application/vnd.com.cisco.ise.identity.endpoint.1.0+xml'})
+
+        resp = self.ise.get('{0}/config/endpoint'.format(self.url_base))
+
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+
+        json_res = ERS._to_json(resp.text)['ns3:searchResult']
+
+        if resp.status_code == 200 and int(json_res['@total']) > 1:
+            result['success'] = True
+            result['response'] = [(i['@name'], i['@id'])
+                                  for i in json_res['resources']['resource']]
+            return result
+
+        elif resp.status_code == 200 and int(json_res['@total']) == 1:
+            result['success'] = True
+            result['response'] = [(json_res['resources']['resource']['@name'],
+                                   json_res['resources']['resource']['@id'])]
+            return result
+
+        elif resp.status_code == 200 and int(json_res['@total']) == 0:
+            result['success'] = True
+            result['response'] = []
+            return result
+
+        else:
+            result['response'] = ERS._to_json(resp.text)['ns3:ersResponse']['messages']['message']['title']
+            result['error'] = resp.status_code
+            return result
+
+    def get_endpoint(self, mac_address):
+        """
+        Get endpoint details
+        :param mac_address: MAC address of the endpoint
+        :return: result dictionary
+        """
+        is_valid = ERS._mac_test(mac_address)
+
+        if not is_valid:
+            raise InvalidMacAddress('{0}. Must be in the form of AA:BB:CC:00:11:22'.format(mac_address))
+        else:
+            self.ise.headers.update({'Accept': 'application/vnd.com.cisco.ise.identity.endpoint.1.0+xml'})
+
+            result = {
+                'success': False,
+                'response': '',
+                'error': '',
+            }
+
+            resp = self.ise.get('{0}/config/endpoint?filter=mac.EQ.{1}'.format(self.url_base, mac_address))
+            found_endpoint = ERS._to_json(resp.text)
+
+            if found_endpoint['ns3:searchResult']['@total'] == '1':
+                resp = self.ise.get('{0}/config/endpoint/{1}'.format(
+                        self.url_base, found_endpoint['ns3:searchResult']['resources']['resource']['@id']))
+                if resp.status_code == 200:
+                    result['success'] = True
+                    result['response'] = ERS._to_json(resp.text)['ns4:endpoint']
+                    return result
+                elif resp.status_code == 404:
+                    result['response'] = '{0} not found'.format(mac_address)
+                    result['error'] = resp.status_code
+                    return result
+                else:
+                    result['response'] = ERS._to_json(resp.text)['ns3:ersResponse']['messages']['message']['title']
+                    result['error'] = resp.status_code
+                    return result
+            elif found_endpoint['ns3:searchResult']['@total'] == '0':
+                result['response'] = '{0} not found'.format(mac_address)
+                result['error'] = 404
+                return result
+
+            else:
+                result['response'] = '{0} not found'.format(mac_address)
+                result['error'] = resp.status_code
+                return result
 
     def get_identity_groups(self):
         """
