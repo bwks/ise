@@ -110,6 +110,7 @@ ise.add_device(name='TEST_R1',
 
 {'response': 'TEST_R1 Added Successfully', 'success': True, 'error': ''}
 ```
+
 #### Delete a device
 ```python
 
