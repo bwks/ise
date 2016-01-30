@@ -63,6 +63,22 @@ ise.get_identity_group('10ac3e70-6d90-11e5-978e-005056bf2f0a')['response']
  'parent': 'NAC Group:NAC:IdentityGroups:User Identity Groups'}
 ```
 
+#### Add a user
+```python
+ise.add_user(user_id='Test1', password='Testing1', user_group_oid='10ac3e70-6d90-11e5-978e-005056bf2f0a')
+
+{'success': True, 'response': 'Test1 Added Successfully', 'error': ''}
+```
+
+#### Delete a user
+```python
+ise.delete_user('9c5eda50-c6f4-11e5-b6b6-000c297b78b4')
+
+{'success': True,
+ 'response': '9c5eda50-c6f4-11e5-b6b6-000c297b78b4 Deleted Successfully',
+ 'error': ''}
+```
+
 #### Get a list of devices
 ```python
 ise.get_devices()['response']
@@ -94,3 +110,11 @@ ise.add_device(name='TEST_R1',
 
 {'response': 'TEST_R1 Added Successfully', 'success': True, 'error': ''}
 ```
+#### Delete a device
+```python
+
+ise.delete_device('0470ab40-c6d3-11e5-b6b6-000c297b78b4')
+{'success': True,
+ 'response': '0470ab40-c6d3-11e5-b6b6-000c297b78b4 Deleted Successfully',
+ 'error': ''}
+``` 
