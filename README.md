@@ -49,18 +49,18 @@ ise.get_identity_groups()['response']
 
 #### Get details about an identity group
 ```python
-ise.get_identity_group('10ac3e70-6d90-11e5-978e-005056bf2f0a')['response']
+ise.get_identity_group('Employee')['response']
 
-{'@id': '10ac3e70-6d90-11e5-978e-005056bf2f0a',
- 'link': {'@href': 'https://192.168.200.13:9060/ers/config/identitygroup/10ac3e70-6d90-11e5-978e-005056bf2f0a',
+{'@xmlns:ns4': 'identity.ers.ise.cisco.com',
+ 'parent': 'NAC Group:NAC:IdentityGroups:User Identity Groups',
+ '@xmlns:ers': 'ers.ise.cisco.com',
+ 'link': {'@href': 'https://192.168.200.13:9060/ers/config/identitygroup/10a42820-6d90-11e5-978e-005056bf2f0a',
   '@rel': 'self',
   '@type': 'application/xml'},
- '@xmlns:ers': 'ers.ise.cisco.com',
- '@name': 'ALL_ACCOUNTS (default)',
  '@xmlns:xs': 'http://www.w3.org/2001/XMLSchema',
- '@xmlns:ns4': 'identity.ers.ise.cisco.com',
- '@description': 'Default ALL_ACCOUNTS (default) User Group',
- 'parent': 'NAC Group:NAC:IdentityGroups:User Identity Groups'}
+ '@id': '10a42820-6d90-11e5-978e-005056bf2f0a',
+ '@description': 'Default Employee User Group',
+ '@name': 'Employee'}
 ```
 
 #### Get a list of internal users
