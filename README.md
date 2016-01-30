@@ -5,7 +5,6 @@ Python module to manage Cisco ISE via the REST API
 http://www.cisco.com/c/en/us/td/docs/security/ise/2-0/api_ref_guide/api_ref_book/ise_api_ref_ers1.html#pgfId-1079790
 Need to add an ISE Administrator with the "ERS-Admin" or "ERS-Operator" group assignment is required to use the API.
 
-
 #### Installation
 ```bash
 mkdir path/to/ise
@@ -34,6 +33,9 @@ ise = ERS(ise_node='192.168.200.13', ers_user='user', ers_pass='pass', verify=Fa
 }
 ```
 
+#### Testing
+Testing has been completed on ISE v2.0
+
 #### Get a list of identity groups
 ```python
 ise.get_identity_groups()['response']
@@ -49,7 +51,7 @@ ise.get_identity_groups()['response']
 
 #### Get details about an identity group
 ```python
-ise.get_identity_group('Employee')['response']
+ise.get_identity_group(group='Employee')['response']
 
 {'@xmlns:ns4': 'identity.ers.ise.cisco.com',
  'parent': 'NAC Group:NAC:IdentityGroups:User Identity Groups',
@@ -72,7 +74,7 @@ ise.get_users()['response']
 
 #### Get details about a user
 ```python
-ise.get_user('Test2')['response']
+ise.get_user(user_id='Test2')['response']
 
 {'enablePassword': '*******',
  'enabled': 'true',
@@ -103,7 +105,7 @@ ise.add_user(user_id='Test1', password='Testing1', user_group_oid='10ac3e70-6d90
 
 #### Delete a user
 ```python
-ise.delete_user('Test1')
+ise.delete_user(user_id='Test1')
 
 {'response': 'Test1 Deleted Successfully', 'error': '', 'success': True}
 ```
