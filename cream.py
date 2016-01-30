@@ -240,6 +240,11 @@ class ERS(object):
             return result
 
     def delete_user(self, user_id):
+        """
+        Delete a user
+        :param user_id: User ID
+        :return: Result dictionary
+        """
         self.ise.headers.update({'Accept': 'application/vnd.com.cisco.ise.identity.internaluser.1.0+xml'})
 
         result = {
@@ -366,15 +371,13 @@ class ERS(object):
             result['error'] = resp.status_code
             return result
 
-    def get_device(self, device_oid):
+    def get_device(self, device):
         """
-        Get a device details
-        :param device_oid: oid of the device
+        Get device detailed info
+        :param device: User ID
         :return: result dictionary
         """
         self.ise.headers.update({'Accept': 'application/vnd.com.cisco.ise.network.networkdevice.1.0+xml'})
-
-        resp = self.ise.get('{0}/config/networkdevice/{1}'.format(self.url_base, device_oid))
 
         result = {
             'success': False,
@@ -382,16 +385,28 @@ class ERS(object):
             'error': '',
         }
 
-        if resp.status_code == 200:
-            result['success'] = True
-            result['response'] = ERS._to_json(resp.text)['ns4:networkdevice']
-            return result
-        elif resp.status_code == 404:
-            result['response'] = 'Unknown User'
-            result['error'] = resp.status_code
-            return result
+        resp = self.ise.get('{0}/config/networkdevice?filter=name.EQ.{1}'.format(self.url_base, device))
+        found_device = ERS._to_json(resp.text)
+
+        if found_device['ns3:searchResult']['@total'] == '1':
+            resp = self.ise.get('{0}/config/networkdevice/{1}'.format(
+                    self.url_base, found_device['ns3:searchResult']['resources']['resource']['@id']))
+            if resp.status_code == 200:
+                result['success'] = True
+                result['response'] = ERS._to_json(resp.text)['ns4:networkdevice']
+                return result
+            elif resp.status_code == 404:
+                result['response'] = 'Unknown Device'
+                result['error'] = resp.status_code
+                return result
+            else:
+                result['response'] = ERS._to_json(resp.text)['ns3:ersResponse']['messages']['message']['title']
+                result['error'] = resp.status_code
+                return result
+        elif found_device['ns3:searchResult']['@total'] == '0':
+            return '{0} not found'.format(device)
         else:
-            result['response'] = ERS._to_json(resp.text)['ns3:ersResponse']['messages']['message']['title']
+            result['response'] = 'Unknown error'
             result['error'] = resp.status_code
             return result
 
