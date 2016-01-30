@@ -6,6 +6,8 @@ requests
  - http://docs.python-requests.org/en/latest/
 xmltodict
  - https://github.com/martinblech/xmltodict
+
+Version: 0.1.2
 """
 import json
 import os
@@ -145,32 +147,42 @@ class ERS(object):
             result['error'] = resp.status_code
             return result
 
-    def get_user(self, user_oid):
+    def get_user(self, user_id):
         """
-        Get an internal users details
-        :param user_oid: oid of the user
+        Get user detailed info
+        :param user_id: User ID
         :return: result dictionary
         """
-        self.ise.headers.update({'Accept': 'application/vnd.com.cisco.ise.identity.internaluser.1.0+xml'})
-
-        resp = self.ise.get('{0}/config/internaluser/{1}'.format(self.url_base, user_oid))
-
         result = {
             'success': False,
             'response': '',
             'error': '',
         }
 
-        if resp.status_code == 200:
-            result['success'] = True
-            result['response'] = ERS._to_json(resp.text)['ns4:internaluser']
-            return result
-        elif resp.status_code == 404:
-            result['response'] = 'Unknown User'
-            result['error'] = resp.status_code
-            return result
+        self.ise.headers.update({'Accept': 'application/vnd.com.cisco.ise.identity.internaluser.1.0+xml'})
+
+        resp = self.ise.get('{0}/config/internaluser?filter=name.EQ.{1}'.format(self.url_base, user_id))
+        found_user = ERS._to_json(resp.text)
+
+        if found_user['ns3:searchResult']['@total'] == '1':
+            resp = self.ise.get('{0}/config/internaluser/{1}'.format(
+                    self.url_base, found_user['ns3:searchResult']['resources']['resource']['@id']))
+            if resp.status_code == 200:
+                result['success'] = True
+                result['response'] = ERS._to_json(resp.text)['ns4:internaluser']
+                return result
+            elif resp.status_code == 404:
+                result['response'] = 'Unknown User'
+                result['error'] = resp.status_code
+                return result
+            else:
+                result['response'] = ERS._to_json(resp.text)['ns3:ersResponse']['messages']['message']['title']
+                result['error'] = resp.status_code
+                return result
+        elif found_user['ns3:searchResult']['@total'] == '0':
+            return '{0} not found'.format(user_id)
         else:
-            result['response'] = ERS._to_json(resp.text)['ns3:ersResponse']['messages']['message']['title']
+            result['response'] = 'Unknown error'
             result['error'] = resp.status_code
             return result
 
