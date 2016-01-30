@@ -175,9 +175,7 @@ ise.add_device(name='TEST_R1',
 
 #### Delete a device
 ```python
+ise.delete_device(device='TEST_R1')['response']
 
-ise.delete_device('0470ab40-c6d3-11e5-b6b6-000c297b78b4')
-{'success': True,
- 'response': '0470ab40-c6d3-11e5-b6b6-000c297b78b4 Deleted Successfully',
- 'error': ''}
+{'response': 'TEST_R1 Deleted Successfully', 'error': '', 'success': True}
 ``` 
