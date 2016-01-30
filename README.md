@@ -103,11 +103,9 @@ ise.add_user(user_id='Test1', password='Testing1', user_group_oid='10ac3e70-6d90
 
 #### Delete a user
 ```python
-ise.delete_user('9c5eda50-c6f4-11e5-b6b6-000c297b78b4')
+ise.delete_user('Test1')
 
-{'success': True,
- 'response': '9c5eda50-c6f4-11e5-b6b6-000c297b78b4 Deleted Successfully',
- 'error': ''}
+{'response': 'Test1 Deleted Successfully', 'error': '', 'success': True}
 ```
 
 #### Get a list of devices
