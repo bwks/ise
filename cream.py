@@ -45,7 +45,8 @@ class ERS(object):
     @staticmethod
     def _to_json(content):
         """
-        convert xml to json
+        ISE API uses xml, this method will convert the xml to json.
+        Why? JSON when you can, XML when you must!
         :param content: xml to convert to json
         :return: json result
         """
@@ -72,7 +73,7 @@ class ERS(object):
                                   for i in ERS._to_json(resp.text)['ns3:searchResult']['resources']['resource']]
             return result
         else:
-            result['response'] = resp.text
+            result['response'] = ERS._to_json(resp.text)['ns3:ersResponse']['messages']['message']['title']
             result['error'] = resp.status_code
             return result
 
@@ -101,7 +102,7 @@ class ERS(object):
             result['error'] = resp.status_code
             return result
         else:
-            result['response'] = resp.text
+            result['response'] = ERS._to_json(resp.text)['ns3:ersResponse']['messages']['message']['title']
             result['error'] = resp.status_code
             return result
 
@@ -140,7 +141,7 @@ class ERS(object):
             return result
 
         else:
-            result['response'] = resp.text
+            result['response'] = ERS._to_json(resp.text)['ns3:ersResponse']['messages']['message']['title']
             result['error'] = resp.status_code
             return result
 
@@ -169,7 +170,7 @@ class ERS(object):
             result['error'] = resp.status_code
             return result
         else:
-            result['response'] = resp.text
+            result['response'] = ERS._to_json(resp.text)['ns3:ersResponse']['messages']['message']['title']
             result['error'] = resp.status_code
             return result
 
@@ -212,7 +213,7 @@ class ERS(object):
             result['response'] = '{0} Added Successfully'.format(user_id)
             return result
         else:
-            result['response'] = resp.text
+            result['response'] = ERS._to_json(resp.text)['ns3:ersResponse']['messages']['message']['title']
             result['error'] = resp.status_code
             return result
 
@@ -240,7 +241,7 @@ class ERS(object):
             result['response'] = '{0} Unknown user'.format(user_oid)
             return result
         else:
-            result['response'] = resp.text
+            result['response'] = ERS._to_json(resp.text)['ns3:ersResponse']['messages']['message']['title']
             result['error'] = resp.status_code
             return result
 
@@ -265,7 +266,7 @@ class ERS(object):
                                   for i in ERS._to_json(resp.text)['ns3:searchResult']['resources']['resource']]
             return result
         else:
-            result['response'] = resp.text
+            result['response'] = ERS._to_json(resp.text)['ns3:ersResponse']['messages']['message']['title']
             result['error'] = resp.status_code
             return result
 
@@ -294,7 +295,7 @@ class ERS(object):
             result['error'] = resp.status_code
             return result
         else:
-            result['response'] = resp.text
+            result['response'] = ERS._to_json(resp.text)['ns3:ersResponse']['messages']['message']['title']
             result['error'] = resp.status_code
             return result
 
@@ -333,7 +334,7 @@ class ERS(object):
             return result
 
         else:
-            result['response'] = resp.text
+            result['response'] = ERS._to_json(resp.text)['ns3:ersResponse']['messages']['message']['title']
             result['error'] = resp.status_code
             return result
 
@@ -362,7 +363,7 @@ class ERS(object):
             result['error'] = resp.status_code
             return result
         else:
-            result['response'] = resp.text
+            result['response'] = ERS._to_json(resp.text)['ns3:ersResponse']['messages']['message']['title']
             result['error'] = resp.status_code
             return result
 
@@ -408,7 +409,7 @@ class ERS(object):
             result['response'] = '{0} Added Successfully'.format(name)
             return result
         else:
-            result['response'] = resp.text
+            result['response'] = ERS._to_json(resp.text)['ns3:ersResponse']['messages']['message']['title']
             result['error'] = resp.status_code
             return result
 
@@ -436,6 +437,6 @@ class ERS(object):
             result['response'] = '{0} Unknown device'.format(device_oid)
             return result
         else:
-            result['response'] = resp.text
+            result['response'] = ERS._to_json(resp.text)['ns3:ersResponse']['messages']['message']['title']
             result['error'] = resp.status_code
             return result
