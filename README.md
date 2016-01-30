@@ -63,6 +63,37 @@ ise.get_identity_group('10ac3e70-6d90-11e5-978e-005056bf2f0a')['response']
  'parent': 'NAC Group:NAC:IdentityGroups:User Identity Groups'}
 ```
 
+#### Get a list of internal users
+```python
+ise.get_users()['response']
+
+[('Test2', '85fd1eb0-c6fa-11e5-b6b6-000c297b78b4')]
+```
+
+#### Get details about a user
+```python
+ise.get_user('Test2')['response']
+
+{'enablePassword': '*******',
+ 'enabled': 'true',
+ 'changePassword': 'true',
+ 'password': '*******',
+ 'lastName': None,
+ '@xmlns:xs': 'http://www.w3.org/2001/XMLSchema',
+ '@description': '',
+ 'email': None,
+ '@name': 'Test2',
+ '@xmlns:ers': 'ers.ise.cisco.com',
+ '@id': '85fd1eb0-c6fa-11e5-b6b6-000c297b78b4',
+ '@xmlns:ns4': 'identity.ers.ise.cisco.com',
+ 'firstName': None,
+ 'customAttributes': None,
+ 'identityGroups': '10ac3e70-6d90-11e5-978e-005056bf2f0a',
+ 'link': {'@type': 'application/xml',
+  '@href': 'https://192.168.200.13:9060/ers/config/internaluser/85fd1eb0-c6fa-11e5-b6b6-000c297b78b4',
+  '@rel': 'self'}}
+```
+
 #### Add a user
 ```python
 ise.add_user(user_id='Test1', password='Testing1', user_group_oid='10ac3e70-6d90-11e5-978e-005056bf2f0a')
