@@ -77,7 +77,7 @@ ise.get_devices()
  'error': ''}
 ```
 
-### Add a device
+#### Add a device
 ```python
 ise.add_device(name='TEST_R1', 
                ip_address='1.1.1.1', 
