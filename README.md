@@ -118,6 +118,37 @@ ise.get_devices()['response']
  ('TEST_R4', '2d80d6d0-c5bc-11e5-a0ed-000c297b78b4')]
 ```
 
+#### Get details about a device
+```python
+ise.get_device(device='TEST_R3')['response']
+
+{'@xmlns:ers': 'ers.ise.cisco.com',
+ '@xmlns:ns4': 'network.ers.ise.cisco.com',
+ 'coaPort': '0',
+ '@name': 'TEST_R3',
+ 'link': {'@type': 'application/xml',
+  '@href': 'https://192.168.200.13:9060/ers/config/networkdevice/3d52aca0-c5bc-11e5-a0ed-000c297b78b4',
+  '@rel': 'self'},
+ '@id': '3d52aca0-c5bc-11e5-a0ed-000c297b78b4',
+ 'profileName': 'Cisco',
+ 'NetworkDeviceGroupList': {'NetworkDeviceGroup': ['TEST_NDG_TYPE#TEST_NDG',
+   'Location#All Locations#TEST_LOC',
+   'Device Type#All Device Types']},
+ '@xmlns:xs': 'http://www.w3.org/2001/XMLSchema',
+ 'authenticationSettings': {'enableKeyWrap': 'false',
+  'networkProtocol': 'RADIUS',
+  'radiusSharedSecret': '******',
+  'keyInputFormat': 'ASCII'},
+ 'NetworkDeviceIPList': {'NetworkDeviceIP': {'mask': '32',
+   'ipaddress': '1.1.1.5'}},
+ 'snmpsettings': {'linkTrapQuery': 'true',
+  'originatingPolicyServicesNode': 'Auto',
+  'roCommunity': 'blah',
+  'version': 'TWO_C',
+  'macTrapQuery': 'true',
+  'pollingInterval': '28800'}}
+```
+
 #### Get a list of device groups
 ```python
 ise.get_device_groups()['response']
