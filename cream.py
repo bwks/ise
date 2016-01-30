@@ -79,15 +79,13 @@ class ERS(object):
             result['error'] = resp.status_code
             return result
 
-    def get_identity_group(self, group_oid):
+    def get_identity_group(self, group):
         """
         Get identity group details
-        :param group_oid: oid of the identity group
+        :param group: Name of the identity group
         :return: result dictionary
         """
         self.ise.headers.update({'Accept': 'application/vnd.com.cisco.ise.identity.identitygroup.1.0+xml'})
-
-        resp = self.ise.get('{0}/config/identitygroup/{1}'.format(self.url_base, group_oid))
 
         result = {
             'success': False,
@@ -95,16 +93,28 @@ class ERS(object):
             'error': '',
         }
 
-        if resp.status_code == 200:
-            result['success'] = True
-            result['response'] = ERS._to_json(resp.text)['ns4:identitygroup']
-            return result
-        elif resp.status_code == 404:
-            result['response'] = 'Unknown User'
-            result['error'] = resp.status_code
-            return result
+        resp = self.ise.get('{0}/config/identitygroup?filter=name.EQ.{1}'.format(self.url_base, group))
+        found_group = ERS._to_json(resp.text)
+
+        if found_group['ns3:searchResult']['@total'] == '1':
+            resp = self.ise.get('{0}/config/identitygroup/{1}'.format(
+                    self.url_base, found_group['ns3:searchResult']['resources']['resource']['@id']))
+            if resp.status_code == 200:
+                result['success'] = True
+                result['response'] = ERS._to_json(resp.text)['ns4:identitygroup']
+                return result
+            elif resp.status_code == 404:
+                result['response'] = 'Unknown Group'
+                result['error'] = resp.status_code
+                return result
+            else:
+                result['response'] = ERS._to_json(resp.text)['ns3:ersResponse']['messages']['message']['title']
+                result['error'] = resp.status_code
+                return result
+        elif found_group['ns3:searchResult']['@total'] == '0':
+            return '{0} not found'.format(group)
         else:
-            result['response'] = ERS._to_json(resp.text)['ns3:ersResponse']['messages']['message']['title']
+            result['response'] = 'Unknown error'
             result['error'] = resp.status_code
             return result
 
@@ -153,13 +163,13 @@ class ERS(object):
         :param user_id: User ID
         :return: result dictionary
         """
+        self.ise.headers.update({'Accept': 'application/vnd.com.cisco.ise.identity.internaluser.1.0+xml'})
+
         result = {
             'success': False,
             'response': '',
             'error': '',
         }
-
-        self.ise.headers.update({'Accept': 'application/vnd.com.cisco.ise.identity.internaluser.1.0+xml'})
 
         resp = self.ise.get('{0}/config/internaluser?filter=name.EQ.{1}'.format(self.url_base, user_id))
         found_user = ERS._to_json(resp.text)
