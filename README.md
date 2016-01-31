@@ -49,6 +49,22 @@ ise.get_identity_groups()['response']
  ...]
 ```
 
+#### Get details about an identity group
+```python
+ise.get_identity_group(group='Employee')['response']
+
+{'@xmlns:ns4': 'identity.ers.ise.cisco.com',
+ 'parent': 'NAC Group:NAC:IdentityGroups:User Identity Groups',
+ '@xmlns:ers': 'ers.ise.cisco.com',
+ 'link': {'@href': 'https://192.168.200.13:9060/ers/config/identitygroup/10a42820-6d90-11e5-978e-005056bf2f0a',
+  '@rel': 'self',
+  '@type': 'application/xml'},
+ '@xmlns:xs': 'http://www.w3.org/2001/XMLSchema',
+ '@id': '10a42820-6d90-11e5-978e-005056bf2f0a',
+ '@description': 'Default Employee User Group',
+ '@name': 'Employee'}
+```
+
 #### Get details about an endpoint
 ```python
 ise.get_endpoint_group(group='Android')['response']
@@ -78,22 +94,6 @@ ise.get_endpoint_groups()['response']
   ...]
 ```
 
-#### Get details about an identity group
-```python
-ise.get_identity_group(group='Employee')['response']
-
-{'@xmlns:ns4': 'identity.ers.ise.cisco.com',
- 'parent': 'NAC Group:NAC:IdentityGroups:User Identity Groups',
- '@xmlns:ers': 'ers.ise.cisco.com',
- 'link': {'@href': 'https://192.168.200.13:9060/ers/config/identitygroup/10a42820-6d90-11e5-978e-005056bf2f0a',
-  '@rel': 'self',
-  '@type': 'application/xml'},
- '@xmlns:xs': 'http://www.w3.org/2001/XMLSchema',
- '@id': '10a42820-6d90-11e5-978e-005056bf2f0a',
- '@description': 'Default Employee User Group',
- '@name': 'Employee'}
-```
-
 #### Get a list of internal users
 ```python
 ise.get_users()['response']
@@ -101,7 +101,7 @@ ise.get_users()['response']
 [('Test2', '85fd1eb0-c6fa-11e5-b6b6-000c297b78b4')]
 ```
 
-#### Get details about a user
+#### Get details about an internal user
 ```python
 ise.get_user(user_id='Test2')['response']
 
@@ -125,14 +125,14 @@ ise.get_user(user_id='Test2')['response']
   '@rel': 'self'}}
 ```
 
-#### Add a user
+#### Add an internal user
 ```python
 ise.add_user(user_id='Test1', password='Testing1', user_group_oid='10ac3e70-6d90-11e5-978e-005056bf2f0a')
 
 {'success': True, 'response': 'Test1 Added Successfully', 'error': ''}
 ```
 
-#### Delete a user
+#### Delete an internal user
 ```python
 ise.delete_user(user_id='Test1')
 
